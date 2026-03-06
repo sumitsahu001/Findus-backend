@@ -36,9 +36,9 @@ export const validateRegister = [
         .trim()
         .notEmpty().withMessage('Address is required'),
 
-    body('area')
+    body('role')
         .trim()
-        .notEmpty().withMessage('Please select your area'),
+        .isIn(['renter', 'landlord']).withMessage('Role must be renter or landlord'),
 
     // after all rules run, check if any failed
     handleValidationErrors,

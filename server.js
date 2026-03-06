@@ -4,6 +4,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
+import errorMiddleware from './middleware/error.middleware.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,6 +32,13 @@ app.use('/user', authRoutes);
 app.get('/', (req, res) => {
     res.json({ message: 'FindUS API is running 🚀' });
 });
+
+/**
+ * GLOBAL ERROR HANDLER
+ * This MUST be the last middleware in the stack (after all routes).
+ * It catches any errors that were passed to next(err).
+ */
+app.use(errorMiddleware);
 
 // --- START SERVER ---
 // Connect to DB first, then start listening

@@ -39,17 +39,20 @@ I'm building FindUS as a real-world project to understand how production systems
 
 ```
 Findus-backend/
-├── server.js                   # Bootstrap: cors → json → morgan → routes → DB → listen
+├── server.js                   # Bootstrap: cors → json → morgan → errorMiddleware → listen
 ├── config/db.js                # mongoose.connect(), process.exit(1) on failure
-├── models/User.model.js        # 9-field schema + role:'user' default + timestamps
+├── models/User.model.js        # Updated: role + Renter CV fields (occupation, income)
 ├── controllers/
-│   └── auth.controller.js      # registerUser() + loginUser() — all business logic here
+│   └── auth.controller.js      # Updated: Wrapped in asyncHandler, standardized responses
 ├── routes/
 │   └── auth.routes.js          # POST /user/save  ·  POST /user/login
 ├── middleware/
-│   ├── validate.middleware.js  # Input rules — runs before controller touches anything
-│   └── auth.middleware.js      # JWT verifier — guards future protected routes
-└── utils/response.js           # Consistent { success, message, data } on every response
+│   ├── validate.middleware.js  # Input rules — runs before controller
+│   ├── auth.middleware.js      # JWT verifier
+│   └── error.middleware.js     # GLOBAL ERROR HANDLER — catches all crashes
+└── utils/
+    ├── response.js             # Success/Error helpers
+    └── asyncHandler.js         # Production utility to remove try-catch bloat
 ```
 
 ---
@@ -104,12 +107,16 @@ npm run dev            # nodemon → http://localhost:5000
 
 ---
 
-## Coming next
+- **Renter Dashboard (v1.0)** — Modular sidebar, "Recently Viewed" history (LocalStorage).
+- **Global Error Handling** — Centralized infrastructure to handle crashes.
+- **Renter CV Support** — Expanded User schema for professional profiles.
 
-- `GET /user/profile` — protected via `auth.middleware.js`
-- Property endpoints — `/property/all`, `/property/search`, `/property/categories`
-- Role-based access: `user` vs `admin`
-- File uploads — Multer + Cloudinary
+## Coming next (Tomorrow's Goal)
+
+- **Phase 2 Backend**: Implement `Property.model.js` and `Application.model.js`.
+- **API Real Data**: Connect dashboard tabs (Applications, Favorites) to real backend endpoints.
+- **CV Persistence**: Save "Renter CV" directly to MongoDB.
+- **Map View API**: Finalize Indore-specific property coordinates.
 
 ---
 

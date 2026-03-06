@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema(
 
         area: {
             type: String,
-            required: [true, 'Area is required'],
+            required: false, // temporarily optional until area selector is added
         },
 
         gender: {
@@ -50,11 +50,33 @@ const userSchema = new mongoose.Schema(
             default: 'male',
         },
 
-        // used by PrivateRoute on frontend to check if user has access
+        // renter = looking for property | landlord = listing property
+        // frontend PrivateRoute reads this from localStorage to control dashboard access
         role: {
             type: String,
-            enum: ['user', 'admin'],
-            default: 'user',
+            enum: ['renter', 'landlord', 'admin'],
+            required: [true, 'Role is required'],
+        },
+
+        // --- RENTER CV FIELDS ---
+        occupation: {
+            type: String,
+            trim: true,
+            default: '',
+        },
+        annualIncome: {
+            type: String,
+            trim: true,
+            default: '',
+        },
+        familySize: {
+            type: String,
+            default: '1 Member',
+        },
+        bio: {
+            type: String,
+            trim: true,
+            default: '',
         },
     },
     {
