@@ -28,4 +28,15 @@ const verifyToken = (req, res, next) => {
     }
 };
 
+// This middleware checks if the user's role is allowed for a specific route
+// e.g. checkRole(['landlord'])
+export const checkRole = (roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return errorResponse(res, 403, 'Permission denied. You do not have the required role.');
+        }
+        next();
+    };
+};
+
 export default verifyToken;

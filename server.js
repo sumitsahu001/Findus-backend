@@ -2,9 +2,17 @@ import 'dotenv/config';         // load .env first — before anything else read
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
+import propertyRoutes from './routes/property.routes.js';
+import applicationRoutes from './routes/application.routes.js';
 import errorMiddleware from './middleware/error.middleware.js';
+
+// Helper for ES Modules __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,15 +43,26 @@ app.use(cors({
 
 // Parse incoming JSON body — without this, req.body is undefined
 app.use(express.json());
+// Parse incoming URL-encoded form data
+app.use(express.urlencoded({ extended: true }));
 
 // Morgan logs every request to console in dev: "POST /user/login 200 45ms"
 // Helps debug without writing console.log everywhere
 app.use(morgan('dev'));
 
+// Serve static uploads folder (Landlord Multi-Image System)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // --- ROUTES ---
 // All auth routes are mounted under /user
 // So POST /user/save and POST /user/login work from here
 app.use('/user', authRoutes);
+
+// Property routes for listings, categories, and locations
+app.use('/property', propertyRoutes);
+
+// Application routes for property requests
+app.use('/application', applicationRoutes);
 
 // Health check — quick way to confirm server is running
 app.get('/', (req, res) => {
