@@ -13,8 +13,25 @@ const PORT = process.env.PORT || 5000;
 // These run on EVERY request, in order, before any route handler
 
 // CORS: browser security blocks requests from a different origin (port 3000 → 5000)
-// This header tells the browser: "yes, I trust requests from port 3000"
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+// We allow local development and our live Netlify URL
+const allowedOrigins = [
+    'http://localhost:3000',
+    'https://findus-by-sumit.netlify.app'
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        // allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true
+}));
 
 // Parse incoming JSON body — without this, req.body is undefined
 app.use(express.json());
